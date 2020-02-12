@@ -11,7 +11,7 @@ import (
 
 // DB configuration const
 const (
-	Host     = "localhost"
+	Host     = "postgres"
 	Port     = 5432
 	User     = "container"
 	Password = "test"

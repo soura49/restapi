@@ -10,8 +10,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/soura49/restapi/amster"
-	//"app/amster"
+//	"github.com/soura49/restapi/app/src/amster"
+	"amster"
 )
 
 var p amster.People

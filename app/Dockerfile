@@ -1,10 +1,10 @@
 FROM golang:alpine
-RUN mkdir /go/src/app 
-ADD . /go/src/app/
-WORKDIR /go/src/app 
+ADD src /go/src/
+WORKDIR /go/src 
 RUN apk update && \
     apk upgrade && \
-    apk add git
+    apk add git && \
+    apk add util-linux
 RUN go get github.com/gorilla/mux && go get github.com/lib/pq
 RUN go build -o main .
 EXPOSE 8088
