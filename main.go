@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/soura49/restapi/amster"
@@ -43,7 +44,7 @@ func updatePeople(w http.ResponseWriter, r *http.Request) {
 	pp = append(pp, p)
 	_, err = amster.InsertOperation(p.UUID, p)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(w, "unable to insert the data")
 	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(p)
@@ -52,7 +53,7 @@ func updatePeople(w http.ResponseWriter, r *http.Request) {
 func getPeople(w http.ResponseWriter, r *http.Request) {
 	out, err := amster.SelectOperationAll()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(w, "Select operation is not working")
 	}
 	for out.Next() {
 		var uuid string
@@ -67,17 +68,26 @@ func getPeople(w http.ResponseWriter, r *http.Request) {
 
 func getPeopleByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	fmt.Println(params)
 	var info string
 	out, err := amster.SelectOperationByID(params["id"])
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(w, "It is already Deleted")
 	}
 	err = out.Scan(&info)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(w, "It is already Deleted")
 	}
 	w.Write([]byte(info))
+}
+
+func deletePeopleByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	out, err := amster.DeleteOperationByID(params["id"])
+	if err != nil {
+		fmt.Fprintf(w, "It is already Deleted")
+	}
+	ou := strconv.FormatInt(out, 10)
+	w.Write([]byte("Number of Rows Deleted: " + ou))
 }
 
 func main() {
@@ -86,5 +96,6 @@ func main() {
 	router.HandleFunc("/people", updatePeople).Methods("POST")
 	router.HandleFunc("/people", getPeople).Methods("GET")
 	router.HandleFunc("/people/{id}", getPeopleByID).Methods("GET")
+	router.HandleFunc("/people/{id}", deletePeopleByID).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8088", router))
 }

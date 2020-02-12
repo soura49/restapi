@@ -82,3 +82,24 @@ func SelectOperationAll() (*sql.Rows, error) {
 	}
 	return out, nil
 }
+
+// DeleteOperationByID represents deleting the row in the DB by the UUID
+func DeleteOperationByID(uuid string) (int64, error) {
+	db, err := dbconnection()
+	if err != nil {
+		return 0, err
+	}
+	sqlstmt := `
+	delete from people where uuid=$1
+	`
+	defer db.Close()
+	out, err := db.Exec(sqlstmt, uuid)
+	if err != nil {
+		return 0, err
+	}
+	numDeleted, err := out.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return numDeleted, nil
+}
