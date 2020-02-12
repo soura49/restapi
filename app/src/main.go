@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/soura49/restapi/amster"
+	//"app/amster"
 )
 
 var p amster.People
