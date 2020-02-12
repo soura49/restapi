@@ -39,7 +39,6 @@ func InsertOperation(uuid string, p People) (string, error) {
 	sqlstmt := `
 	INSERT INTO people (uuid,info)
 	VALUES ($1, $2)`
-	fmt.Println(uuid, p)
 	o, err := json.Marshal(p)
 	if err != nil {
 		return " ", err
@@ -81,6 +80,31 @@ func SelectOperationAll() (*sql.Rows, error) {
 		return nil, err
 	}
 	return out, nil
+}
+
+//UpdateOperationByID represents the function to update the DB data with the existing uuid
+func UpdateOperationByID(uuid string, p People) (int64, error) {
+	db, err := dbconnection()
+	if err != nil {
+		return 0, err
+	}
+	sqlstmt := `
+	update people set info=$1 where uuid=$2
+	`
+	defer db.Close()
+	o, err := json.Marshal(p)
+	if err != nil {
+		return 0, err
+	}
+	out, err := db.Exec(sqlstmt, o, uuid)
+	if err != nil {
+		return 0, err
+	}
+	numDeleted, err := out.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return numDeleted, nil
 }
 
 // DeleteOperationByID represents deleting the row in the DB by the UUID
