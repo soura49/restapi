@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restapi
+  labels:
+    app: restapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restapi
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: restapi
+    spec:
+      spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "role"
+                operator: In
+                values: ["app"]
+      containers:
+      - name: app
+        image: soura49/restapi:app-0
+        env:
+        - name: DB_HOST
+          value: "172.17.0.4"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          value: "container"
+        - name: DB_PASS
+          value: "test"
+        - name: DB_NAME
+          value: "titanic"
+        ports:
+        - containerPort: 8088
+        resources:
+          limits:
+            cpu: 500m
+            memory: 20Mi
+          requests:
+            cpu: 500m
+            memory: 20Mi
+      nodeSelector:
+        role: app

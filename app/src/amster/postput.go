@@ -4,18 +4,19 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"os"
 
 	// Using the pq as the postgres driver
 	_ "github.com/lib/pq"
 )
 
 // DB configuration const
-const (
-	Host     = "postgres"
-	Port     = 5432
-	User     = "container"
-	Password = "test"
-	Dbname   = "titanic"
+var (
+	Host     = os.Getenv("DB_HOST")
+	Port     = os.Getenv("DB_PORT")
+	User     = os.Getenv("DB_USER")
+	Password = os.Getenv("DB_PASS")
+	Dbname   = os.Getenv("DB_NAME")
 )
 
 func dbconnection() (*sql.DB, error) {

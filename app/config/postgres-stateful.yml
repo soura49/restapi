@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresstate
+  labels:
+    app: postgresstate
+spec:
+  serviceName: postgresstate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresstate
+  template:
+    metadata:
+      labels:
+        app: postgresstate
+    spec:
+      spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "role"
+                operator: In
+                values: ["app"]
+      containers:
+      - name: app
+        image: soura49/restapi:postgresstate-restapi-0
+        ports:
+        - containerPort: 5432
+        resources:
+          limits:
+            cpu: 500m
+            memory: 20Mi
+          requests:
+            cpu: 500m
+            memory: 20Mi
+      nodeSelector:
+        role: app
